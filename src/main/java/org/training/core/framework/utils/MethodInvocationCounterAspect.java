@@ -32,7 +32,8 @@ public class MethodInvocationCounterAspect {
 
 
   //@Pointcut("!within(java..*) && !within(org.training.core.framework..*) && !within(org.aspectj..*)")
-  @Pointcut("execution(* org.training..*(..))")
+  //@Pointcut("execution(* org.training..*(..))")
+  @Pointcut("execution(* *(..))")
   public void targetMethods() {
   }
 

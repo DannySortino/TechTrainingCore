@@ -8,6 +8,7 @@
     <include within="java.*"/>
     <exclude within="org.aspectj.*"/>
     <exclude within="org.training.core.framework.*"/>
+    <exclude within="org.slf4j.*"/>
     <exclude within="*Test"/>
   </weaver>
 </aspectj>

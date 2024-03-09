@@ -1,7 +1,5 @@
 package org.training.core.framework;
 
-import static org.training.core.framework.Constants.METHOD_INVOCATION_COUNT;
-import static org.training.core.framework.Constants.UNIQUE_CUSTOM_METHOD_NAME;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
@@ -10,9 +8,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import javassist.Modifier;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -38,49 +36,26 @@ public class ClassDescriptor {
   public ClassDescriptor(String name, Object... args) {
     Objects.requireNonNull(name, "Class name cannot be null");
     this.name = name;
-    Class<?> realClass = getRealClass(name);
-
-    if (isJavaPackageClass(realClass) || isCustomClass(realClass)) {
-      //TODO: Danny - we cant overwrite internal java package classes, so should write a superclass wrapper for it
-      clazz = realClass;
-    } else {
-      //clazz = createCustomClass(name, realClass);
-      clazz = realClass;
-    }
-
+    clazz = getRealClass(name);;
     ensureInstantiatedClass(args);
-    classDef = createClassDef(realClass);
+    classDef = createClassDef(clazz);
   }
 
   @SneakyThrows
   public ClassDescriptor(String name, Object instancedObject) {
     Objects.requireNonNull(name, "Class name cannot be null");
     this.name = name;
-    Class<?> realClass = getRealClass(name);
-    clazz = realClass;
+    clazz = getRealClass(name);
 
     this.instancedObject = instancedObject;
-    if (!WrapperTypes.isWrapperType(realClass)) {
+    if (!WrapperTypes.isWrapperType(clazz)) {
       ensureInstantiatedClass();
     }
-    classDef = createClassDef(realClass);
-  }
-
-
-  private boolean isJavaPackageClass(Class<?> realClass) {
-    return realClass.getPackageName().startsWith("java");
-  }
-
-  private boolean isCustomClass(Class<?> realClass) {
-    return realClass.getName().contains(UNIQUE_CUSTOM_METHOD_NAME);
+    classDef = createClassDef(clazz);
   }
 
   private static Class<?> getRealClass(String name) throws ClassNotFoundException {
-    try {
-      return Class.forName(name + UNIQUE_CUSTOM_METHOD_NAME);
-    } catch (ClassNotFoundException e) {
-      return Class.forName(name);
-    }
+    return Class.forName(name);
   }
 
   private ClassDef createClassDef(Class<?> realClass) {
@@ -205,23 +180,10 @@ public class ClassDescriptor {
     } catch (Exception e) {
       // This is expected if the class does not have the method
     }
-
-    if (clazz.getName().contains(UNIQUE_CUSTOM_METHOD_NAME)) {
-      Field field = clazz.getDeclaredField(METHOD_INVOCATION_COUNT);
-      if (field.trySetAccessible()) {
-        return (Map<String, Integer>) field.get(instancedObject);
-      } else {
-        log.warn("Unable to set field {} accessible", field.getName());
-        return new HashMap<>();
-      }
-    } else {
-      log.warn("Unable to get field {}", METHOD_INVOCATION_COUNT);
-      return new HashMap<>();
-
-    }
+    return new HashMap<>();
   }
 
-  private boolean isSameClassAsCurrent(Entry<String, Integer> entry) {
+  private boolean isSameClassAsCurrent(Map.Entry<String, Integer> entry) {
     String packageAndModuleName = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
 
     return packageAndModuleName.equals(clazz.getName());
