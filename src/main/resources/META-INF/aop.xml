@@ -1,0 +1,13 @@
+<aspectj>
+  <aspects>
+    <aspect name="org.training.core.framework.utils.MethodInvocationCounterAspect"/>
+  </aspects>
+  <weaver options="-verbose -showWeaveInfo -Xset:weaveJavaxPackages=true">
+    <include within="org.training.*"/>
+    <include within="org.training.core.framework.utils.MethodInvocationCounterAspect"/>
+    <include within="java.*"/>
+    <exclude within="org.aspectj.*"/>
+    <exclude within="org.training.core.framework.*"/>
+    <exclude within="*Test"/>
+  </weaver>
+</aspectj>
