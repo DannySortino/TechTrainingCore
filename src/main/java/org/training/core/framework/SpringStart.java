@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.training.core.framework.config.AutoConfig;
 
 @Slf4j
 public class SpringStart {
@@ -18,8 +21,8 @@ public class SpringStart {
   public static Object start(String className, Pair<Class<?>, Object>... args) {
     Class<?>[] argTypes = Objects.isNull(args) ? null
         : Arrays.stream(args).map(Pair::getLeft).toArray(Class<?>[]::new);
-    Object[] argValues = Objects.isNull(args) ? null
-        : Arrays.stream(args).map(Pair::getRight).toArray(Object[]::new);
+    String[] argValues = Objects.isNull(args) ? null
+        : Arrays.stream(args).map(arg -> arg.getRight().toString()).toArray(String[]::new);
 
     Class<?> realClass;
     Method method;
@@ -34,9 +37,8 @@ public class SpringStart {
       log.error("You are likely missing the expected method - main", e);
       throw new RuntimeException(e);
     }
-    method.setAccessible(true);
 
-    return method.invoke(null, argValues);
+    return SpringApplication.run(new Class[]{realClass, AutoConfig.class}, argValues);
   }
 
 }
