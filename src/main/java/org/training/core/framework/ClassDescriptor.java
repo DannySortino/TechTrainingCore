@@ -36,7 +36,7 @@ public class ClassDescriptor {
   public ClassDescriptor(String name, Object... args) {
     Objects.requireNonNull(name, "Class name cannot be null");
     this.name = name;
-    clazz = getRealClass(name);;
+    clazz = getRealClass(name);
     ensureInstantiatedClass(args);
     classDef = createClassDef(clazz);
   }
@@ -175,8 +175,9 @@ public class ClassDescriptor {
 
     try {
       return MethodInvocationCounterAspect.getMethodInvocationCount().entrySet().stream()
-          .filter(this::isSameClassAsCurrent)
-          .collect(Collectors.toMap(k -> k.getKey().substring(k.getKey().lastIndexOf(".")+1), Map.Entry::getValue));
+          .filter(this::isSameClassAsCurrent).collect(
+              Collectors.toMap(k -> k.getKey().substring(k.getKey().lastIndexOf(".") + 1),
+                  Map.Entry::getValue));
     } catch (Exception e) {
       // This is expected if the class does not have the method
     }

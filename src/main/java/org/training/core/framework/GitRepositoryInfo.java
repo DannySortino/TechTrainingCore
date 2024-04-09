@@ -10,7 +10,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import java.io.File;
 import java.util.List;
 
-public class GitRepositoryInfo implements AutoCloseable{
+public class GitRepositoryInfo implements AutoCloseable {
 
   private final Repository repository;
   private final Git git;
@@ -36,8 +36,7 @@ public class GitRepositoryInfo implements AutoCloseable{
   public List<String> getGitHistory() {
     Iterable<RevCommit> commits = git.log().call();
     return StreamSupport.stream(commits.spliterator(), false)
-        .map(commit -> commit.getId().getName() + ": " + commit.getShortMessage())
-        .toList();
+        .map(commit -> commit.getId().getName() + ": " + commit.getShortMessage()).toList();
   }
 
   @SneakyThrows

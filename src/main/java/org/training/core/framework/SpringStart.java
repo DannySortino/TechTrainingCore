@@ -10,11 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SpringStart {
 
   public static Object start(String className) {
-    return start(className,new Pair<>(String[].class, new String[]{}));
+    return start(className, new Pair<>(String[].class, new String[]{}));
   }
 
-    @SafeVarargs
-    @SneakyThrows
+  @SafeVarargs
+  @SneakyThrows
   public static Object start(String className, Pair<Class<?>, Object>... args) {
     Class<?>[] argTypes = Objects.isNull(args) ? null
         : Arrays.stream(args).map(Pair::getLeft).toArray(Class<?>[]::new);
