@@ -6,8 +6,9 @@ import java.util.Objects;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.training.core.framework.config.AutoConfig;
+import org.training.core.framework.utils.MethodInvocationCounterAspect;
+import org.training.core.framework.utils.SpringApplicationRunAspect;
 
 @Slf4j
 public class SpringStart {
@@ -21,7 +22,9 @@ public class SpringStart {
   public static Object start(String className, Pair<Class<?>, Object>... args) {
     Class<?>[] argTypes = Objects.isNull(args) ? null
         : Arrays.stream(args).map(Pair::getLeft).toArray(Class<?>[]::new);
-    String[] argValues = Objects.isNull(args) ? null
+    Object[] argValues = Objects.isNull(args) ? null
+        : Arrays.stream(args).map(Pair::getRight).toArray(Object[]::new);
+    String[] stringArgs = Objects.isNull(args) ? null
         : Arrays.stream(args).map(arg -> arg.getRight().toString()).toArray(String[]::new);
 
     Class<?> realClass;
@@ -38,7 +41,14 @@ public class SpringStart {
       throw new RuntimeException(e);
     }
 
-    return SpringApplication.run(new Class[]{realClass, AutoConfig.class}, argValues);
+    SpringApplication.run(new Class[]{realClass, AutoConfig.class}, stringArgs);
+
+    SpringApplicationRunAspect.setIgnore(true);
+    Object result = method.invoke(null, argValues);
+    SpringApplicationRunAspect.setIgnore(false);
+
+    return result;
+
   }
 
 }

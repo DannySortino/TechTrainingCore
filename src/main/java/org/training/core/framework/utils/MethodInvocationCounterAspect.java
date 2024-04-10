@@ -31,13 +31,11 @@ public class MethodInvocationCounterAspect {
   private static final AtomicInteger methodDepthCounter = new AtomicInteger(0);
 
 
-  //@Pointcut("!within(java..*) && !within(org.training.core.framework..*) && !within(org.aspectj..*)")
-  //@Pointcut("execution(* org.training..*(..))")
-  @Pointcut("execution(* *(..))")
+  @Pointcut("execution(* *(..)) && !within(org.springframework.boot.SpringApplication) && !within(org.training.core.framework.utils.SpringApplicationRunAspect)")
   public void targetMethods() {
   }
 
-  @Pointcut("execution(public * java..*.*(..)) || execution(protected * java..*.*(..)) || execution(* java..*.*(..))")
+  @Pointcut("(execution(public * java..*.*(..)) || execution(protected * java..*.*(..)) || execution(* java..*.*(..))) && !within(org.springframework.boot.SpringApplication) && !within(org.training.core.framework.utils.SpringApplicationRunAspect)")
   public void targetJavaPublicMethods() {
   }
 

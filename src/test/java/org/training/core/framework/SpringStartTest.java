@@ -2,6 +2,7 @@ package org.training.core.framework;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -15,6 +16,7 @@ public class SpringStartTest {
     // Inner class to serve as a test fixture
     public static class ExampleClass {
         public static void main(String[] args) {
+            SpringApplication.run(ExampleClass.class, args);
             System.out.println("Hello from ExampleClass main method");
         }
     }
